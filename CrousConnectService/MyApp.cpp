@@ -13,6 +13,7 @@
 #include <ctime>
 #include <sstream>
 #include <iostream>
+#include <memory>
 
 #include "AppData.h"
 
@@ -32,8 +33,8 @@ bool getCrousGateway(std::string& gatewayStr);
 #define WORKING_BUFFER_SIZE 15000
 #define MAX_TRIES 3
 
-#define MALLOC(x) HeapAlloc(GetProcessHeap(), 0, (x))
-#define FREE(x) HeapFree(GetProcessHeap(), 0, (x))
+#define MALLOC(x) malloc(x)
+#define FREE(x) free(x)
 
 
 MyApp::MyApp(CSampleService& underlyingService) : m_underlyingService(underlyingService)
@@ -251,18 +252,19 @@ bool printAdaptatersInfosIpv4()
 {
 	unsigned int i = 0;
 
-	PIP_ADAPTER_ADDRESSES pAddresses = nullptr;
+	//std::unique_ptr<_IP_ADAPTER_ADDRESSES_LH> pAddresses = nullptr;
 
 	PIP_ADAPTER_ADDRESSES pCurrAddresses = nullptr;
 	PIP_ADAPTER_UNICAST_ADDRESS pUnicast = nullptr;
 	PIP_ADAPTER_GATEWAY_ADDRESS pGateway = nullptr;
 	IP_ADAPTER_DNS_SERVER_ADDRESS *pDnServer = nullptr;
 
-	pAddresses = getAdaptatersInfosIpv4();
+	//pAddresses = getAdaptatersInfosIpv4();
+	std::unique_ptr<IP_ADAPTER_ADDRESSES_LH> pAddresses(getAdaptatersInfosIpv4());
 
 	if (pAddresses) {
 		// If successful, output some information from the data we received
-		pCurrAddresses = pAddresses;
+		pCurrAddresses = pAddresses.get();
 		while (pCurrAddresses) {
 			printf("\tDescription: %wS\n", pCurrAddresses->Description);
 			printf("\tFriendly name: %wS\n", pCurrAddresses->FriendlyName);
@@ -329,18 +331,16 @@ bool getCrousGateway(std::string& gatewayStr)
 {
 	unsigned int i = 0;
 
-	PIP_ADAPTER_ADDRESSES pAddresses = nullptr;
-
 	PIP_ADAPTER_ADDRESSES pCurrAddresses = nullptr;
 	PIP_ADAPTER_UNICAST_ADDRESS pUnicast = nullptr;
 	PIP_ADAPTER_GATEWAY_ADDRESS pGateway = nullptr;
 	IP_ADAPTER_DNS_SERVER_ADDRESS *pDnServer = nullptr;
 
-	pAddresses = getAdaptatersInfosIpv4();
+	std::unique_ptr<IP_ADAPTER_ADDRESSES_LH> pAddresses(getAdaptatersInfosIpv4());
 
 	if (pAddresses) 
 	{
-		pCurrAddresses = pAddresses;
+		pCurrAddresses = pAddresses.get();
 		while (pCurrAddresses) 
 		{
 			pGateway = pCurrAddresses->FirstGatewayAddress;
