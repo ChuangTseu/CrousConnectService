@@ -10,10 +10,11 @@ INSTALL & USAGE
 	- In C/C++ -> Preprocessor -> Preprocessor Definitions, add DEBUG_AS_APP to compile as a classic console program
 	
 - Login & Password:
-	Put a file 'CrousConnectService_login.txt' next to the service/exe with the following format (no spaces/tabs, only two lines):
+	Put a file 'CrousConnectService_login.txt' (example provided in root directory) next to the service/exe with the following format (no spaces/tabs, only two lines):
 	
-login
-password
+login  
+password  
+
 
 
 - Install the service by executing the following command in the exe directory as admin (ex: admin cmd or powershell)
